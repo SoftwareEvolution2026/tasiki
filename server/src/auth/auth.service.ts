@@ -45,6 +45,15 @@ export class AuthService {
     return { ...tokens, user: this.toPublicUser(user) };
   }
 
+  /** Return the public profile of the authenticated user. */
+  async me(userId: string): Promise<PublicUser> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+    return this.toPublicUser(user);
+  }
+
   /** Verify a refresh token, rotate it, and return a fresh token pair. */
   async refresh(refreshToken: string): Promise<AuthTokens> {
     let payload: RefreshPayload;
