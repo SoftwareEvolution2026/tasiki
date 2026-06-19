@@ -1,0 +1,16 @@
+{
+  "name": "tasiki",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tasiki — a task manager built across 6 versions to demonstrate Lehman's Laws of Software Evolution.",
+  "scripts": {
+    "build:shared": "pnpm --filter @tasiki/shared build",
+    "server:dev": "pnpm --filter @tasiki/server start:dev",
+    "server:migrate": "pnpm --filter @tasiki/server prisma:migrate",
+    "mobile:start": "pnpm --filter @tasiki/mobile start"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@10.33.2"
+}

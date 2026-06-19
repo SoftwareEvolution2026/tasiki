@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="96" viewBox="0 0 360 96" fill="none" role="img" aria-label="Tasiki">
+  <defs>
+    <linearGradient id="tasikiTile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4F8DFD"/>
+      <stop offset="1" stop-color="#2D6BF0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- mark: rounded tile + checkmark -->
+  <rect x="8" y="8" width="80" height="80" rx="22" fill="url(#tasikiTile)"/>
+  <path d="M32 49 L44 61 L66 35"
+        fill="none" stroke="#FFFFFF" stroke-width="8"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- wordmark -->
+  <text x="104" y="62"
+        font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+        font-size="46" font-weight="700" letter-spacing="-1"
+        fill="#1F2937">tasiki</text>
+</svg>
