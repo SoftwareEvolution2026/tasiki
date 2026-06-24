@@ -4,7 +4,7 @@
 
 # Tasiki
 
-A cross-platform task manager — **NestJS** API + **React Native (Expo)** mobile app, sharing a typed contract layer — built incrementally across **6 versions** to demonstrate **Lehman's 8 Laws of Software Evolution** for coursework.
+A cross-platform task manager — **NestJS** API + **React Native (Expo)** mobile app, sharing a typed contract layer — built incrementally across **6 versions** to demonstrate **Lehman's 8 Laws of Software Evolution**.
 
 The interesting artifact here is not the app: it is the *history*. Every version is a git tag, a Prisma migration, and a CHANGELOG entry. See [`docs/lehmans-laws.md`](./docs/lehmans-laws.md) for how each law is evidenced.
 
@@ -46,4 +46,3 @@ pnpm mobile:start
 
 - Node 20+
 - pnpm 10+
-- Expo Go on your phone (or an emulator) for the mobile app
