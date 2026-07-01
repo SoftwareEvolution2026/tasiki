@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -9,30 +9,38 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Redirect } from 'expo-router';
+import { Redirect, useFocusEffect, useRouter } from 'expo-router';
 import type { Task } from '@tasiki/shared';
+import { TaskRow } from '@/components/task-row';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth-context';
 import { colors } from '@/lib/theme';
 
 export default function TasksScreen() {
   const { user, initializing, logout } = useAuth();
+  const router = useRouter();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
 
   const load = useCallback(async () => {
-    const { data } = await api.get<Task[]>('/tasks');
-    setTasks(data);
+    try {
+      const { data } = await api.get<Task[]>('/tasks');
+      setTasks(data);
+    } catch {
+      // ignore — kept simple for the course build
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  useEffect(() => {
-    if (!user) return;
-    load()
-      .catch(() => undefined)
-      .finally(() => setLoading(false));
-  }, [user, load]);
+  // Reload whenever the screen regains focus (e.g. returning from edit).
+  useFocusEffect(
+    useCallback(() => {
+      if (user) void load();
+    }, [user, load]),
+  );
 
   const addTask = async () => {
     const trimmed = title.trim();
@@ -43,14 +51,13 @@ export default function TasksScreen() {
       setTasks((prev) => [data, ...prev]);
       setTitle('');
     } catch {
-      // ignore — kept simple for v1
+      // ignore
     } finally {
       setAdding(false);
     }
   };
 
   const toggle = async (id: string) => {
-    // Optimistic flip, reconciled by the server response.
     setTasks((prev) =>
       prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)),
     );
@@ -61,6 +68,16 @@ export default function TasksScreen() {
       setTasks((prev) =>
         prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)),
       );
+    }
+  };
+
+  const remove = async (id: string) => {
+    const previous = tasks;
+    setTasks((prev) => prev.filter((t) => t.id !== id));
+    try {
+      await api.delete(`/tasks/${id}`);
+    } catch {
+      setTasks(previous); // rollback on failure
     }
   };
 
@@ -120,14 +137,21 @@ export default function TasksScreen() {
             <Text style={styles.empty}>No tasks yet — add your first one.</Text>
           }
           renderItem={({ item }) => (
-            <Pressable style={styles.row} onPress={() => toggle(item.id)}>
-              <View style={[styles.checkbox, item.done && styles.checkboxDone]}>
-                {item.done ? <Text style={styles.check}>✓</Text> : null}
-              </View>
-              <Text style={[styles.taskText, item.done && styles.taskDone]}>
-                {item.title}
-              </Text>
-            </Pressable>
+            <TaskRow
+              task={item}
+              onToggle={toggle}
+              onDelete={remove}
+              onPress={(task) =>
+                router.push({
+                  pathname: '/task/[id]',
+                  params: {
+                    id: task.id,
+                    title: task.title,
+                    description: task.description ?? '',
+                  },
+                })
+              }
+            />
           )}
         />
       )}
@@ -186,30 +210,4 @@ const styles = StyleSheet.create({
   loader: { marginTop: 40 },
   list: { paddingHorizontal: 20, paddingTop: 4, gap: 8 },
   empty: { textAlign: 'center', color: colors.muted, marginTop: 40 },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    backgroundColor: colors.background,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-  },
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 7,
-    borderWidth: 2,
-    borderColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  checkboxDone: {
-    backgroundColor: colors.primary,
-  },
-  check: { color: '#fff', fontSize: 15, fontWeight: '800', lineHeight: 18 },
-  taskText: { flex: 1, fontSize: 16, color: colors.text },
-  taskDone: { color: colors.done, textDecorationLine: 'line-through' },
 });
