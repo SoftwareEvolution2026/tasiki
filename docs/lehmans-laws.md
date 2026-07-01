@@ -25,6 +25,12 @@ CHANGELOG entry. The tables below are extended once per release.
 | Version | LOC  | Endpoints | Screens | Prisma models | Migrations | Bugs logged |
 |---------|------|-----------|---------|---------------|------------|-------------|
 | v1.0    | 1333 | 9         | 3       | 3             | 1          | 0           |
+| v2.0    | 1731 | 11        | 4       | 3             | 2          | 1           |
+
+**Deltas v1→v2:** +398 LOC, +2 endpoints (`PATCH /tasks/:id`, `DELETE /tasks/:id`),
++1 screen (edit), +1 migration. First bug logged — the start of the
+Declining-Quality trend (Law 7). Growth continues on every axis except model
+count, which holds steady this release (Law 6).
 
 ## Roadmap (planned)
 
