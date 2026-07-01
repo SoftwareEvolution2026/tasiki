@@ -12,11 +12,21 @@ export enum Priority {
 export interface Task {
   id: string;
   title: string;
+  description: string | null;
   done: boolean;
   createdAt: string;
+  updatedAt: string;
 }
 
 /** Payload for creating a task. */
 export interface CreateTaskInput {
   title: string;
+  description?: string;
+}
+
+/** Payload for updating a task — every field is optional. */
+export interface UpdateTaskInput {
+  title?: string;
+  description?: string | null;
+  done?: boolean;
 }
